@@ -65,5 +65,13 @@
     "@loopback/eslint-config": "^10.0.5",
     "eslint": "^7.18.0",
     "typescript": "~4.1.3"
+  },
+  "nodemonConfig": {
+    "verbose": true,
+    "watch": [
+      "src/"
+    ],
+    "ext": ".ts",
+    "exec": "npm start"
   }
 }
