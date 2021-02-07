@@ -6,4 +6,8 @@ run apk add --no-cache bash
 RUN npm install -g @loopback/cli
 
 RUN mkdir -p /home/node/app
+# Usuáriro já vem na imagem node; a partir de agora, para executar um apk add,
+# por exemplo, será necessário especficiar um usuário root já que o padrão é
+# node. Ex: docker exec -u root -it container_name apk add bash;
+USER node
 WORKDIR /home/node/app
