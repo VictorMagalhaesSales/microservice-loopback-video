@@ -6,7 +6,12 @@ const config = {
   connector: 'esv6',
   index: 'catalog',
   apiVersion: '7',
-  defaultSize: ''
+  defaultSize: '',
+  configuration: {
+    node: process.env.ELASTIC_SEARCH_HOST,
+    requestTimeout: process.env.ELASTIC_SEARCH_HOST,
+    pingTimeout: process.env.ELASTIC_SEARCH_PING_TIMEOUT
+  }
 };
 
 // Observe application's life cycle to disconnect the datasource when
