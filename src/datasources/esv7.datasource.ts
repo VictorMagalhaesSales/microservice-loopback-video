@@ -1,16 +1,19 @@
 import {inject, lifeCycleObserver, LifeCycleObserver} from '@loopback/core';
 import {juggler} from '@loopback/repository';
 
-const config = {
+const elasticConfigConnector = {
   name: 'esv7',
   connector: 'esv6',
   index: 'catalog',
   apiVersion: '7',
-  defaultSize: '',
+  //defaultSize: '',
   configuration: {
     node: process.env.ELASTIC_SEARCH_HOST,
     requestTimeout: process.env.ELASTIC_SEARCH_HOST,
     pingTimeout: process.env.ELASTIC_SEARCH_PING_TIMEOUT
+  },
+  mappingProperties: {
+
   }
 };
 
@@ -22,12 +25,13 @@ const config = {
 export class Esv7DataSource extends juggler.DataSource
   implements LifeCycleObserver {
   static dataSourceName = 'esv7';
-  static readonly defaultConfig = config;
+  static readonly defaultConfig = elasticConfigConnector;
 
   constructor(
     @inject('datasources.config.esv7', {optional: true})
-    dsConfig: object = config,
+    dsConfig: object = elasticConfigConnector,
   ) {
     super(dsConfig);
   }
+
 }
