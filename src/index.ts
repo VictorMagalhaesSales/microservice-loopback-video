@@ -1,5 +1,5 @@
 import {ApplicationConfig, MicroserviceLoopbackVideoApplication} from './application';
-
+import './bootstrap';
 export * from './application';
 
 export async function main(options: ApplicationConfig = {}) {
