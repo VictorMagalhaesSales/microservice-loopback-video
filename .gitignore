@@ -62,3 +62,4 @@ typings/
 
 .npm-cache
 .docker/elasticdata/
+.docker/rabbitmqdata/

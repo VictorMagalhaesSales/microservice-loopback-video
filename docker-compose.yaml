@@ -13,7 +13,7 @@ services:
       - .:/home/node/app
     networks:
       - app-network
-      - rabbitmq_micro-video
+      ##- rabbitmq_micro-video COMPOSE DO RABBITMQ MOVIDO PARA ESTE ARQUIVO
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.5.1
@@ -35,8 +35,23 @@ services:
     networks:
       - app-network
 
+  rabbitmq:
+    image: rabbitmq:3.8-management-alpine
+    container_name: micro-rabbitmq-video
+    hostname: rabbitmq
+    ports:
+      - 15672:15672
+      - 5672:5672
+    volumes:
+      - ./.docker/rabbitmqdata:/var/lib/rabbitmq/mnesia
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
+    networks:
+      - app-network
+
 networks:
   app-network:
     driver: bridge
-  rabbitmq_micro-video: #network criada no projeto com rabbitmq
-    external: true
+  ##rabbitmq_micro-video: #network criada no projeto com rabbitmq / COMPOSE DO RABBITMQ MOVIDO PARA ESTE ARQUIVO
+    ##external: true COMPOSE DO RABBITMQ MOVIDO PARA ESTE ARQUIVO
