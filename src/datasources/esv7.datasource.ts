@@ -13,7 +13,21 @@ const elasticConfigConnector = {
     pingTimeout: process.env.ELASTIC_SEARCH_PING_TIMEOUT
   },
   mappingProperties: {
-
+    docType: {
+      type: "keyword"
+    },
+    id: {
+      type: "long"
+    },
+    name: {
+      type: "text",
+      fields: {
+        keyword: {
+          type: "keyword",
+          ignore_above: 256
+        }
+      }
+    }
   }
 };
 
