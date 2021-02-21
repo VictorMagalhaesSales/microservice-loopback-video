@@ -13,7 +13,9 @@ export class MicroserviceLoopbackVideoApplication extends BootMixin(ServiceMixin
   constructor(options: ApplicationConfig = {}) {
     super(options);
 
+    // Registrando server do Rabbitmq na aplicação
     this.server(RabbitmqServer);
+
     this.options.rest.sequence = MySequence;
     this.component(RestComponent);
     const restServer = this.getSync<RestServer>('servers.RestServer');
