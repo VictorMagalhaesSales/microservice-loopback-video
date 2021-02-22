@@ -24,9 +24,15 @@ export class RabbitmqServer extends Context implements Server {
     // Criação do canal para comunicação com o Rabbitmq que usaremos para enviar e consumir informações
     const channel: Channel = await this.conn.createChannel();
     // Criando 'exchange' e 'queue' e fazendo um bind através de uma routing key
-    const exchangeAmq = await channel.assertExchange('amq.direct', 'direct');
-    const queue1 = await channel.assertQueue('queue-1');
-    channel.bindQueue(queue1.queue, exchangeAmq.exchange, 'first-key');
+    const exchangeTopic = await channel.assertExchange('amq.topic', 'topic');
+    const syncVideosQueue = await channel.assertQueue('micro-catalog/sync-videos');
+    // Qualquer publicação na exchange amq.topic com a key seguindo o padrão micro.*.*, cairá na queue de sync videos
+    channel.bindQueue(syncVideosQueue.queue, exchangeTopic.exchange, 'micro.*.*');
+
+    channel.consume(syncVideosQueue.queue, msg => {
+      if (!msg) return null;
+      console.log(Buffer.from(msg.content).toString());
+    })
   }
 
   async stop(): Promise<void> {
