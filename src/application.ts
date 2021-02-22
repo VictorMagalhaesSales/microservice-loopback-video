@@ -21,12 +21,6 @@ export class MicroserviceLoopbackVideoApplication extends BootMixin(ServiceMixin
     const restServer = this.getSync<RestServer>('servers.RestServer');
     restServer.static('/', path.join(__dirname, '../public'));
 
-    // // Customize @loopback/rest-explorer configuration here
-    // this.configure(RestExplorerBindings.COMPONENT).to({
-    //   path: '/explorer',
-    // });
-    // this.component(RestExplorerComponent);
-
     this.projectRoot = __dirname;
     this.bootOptions = {
       controllers: {

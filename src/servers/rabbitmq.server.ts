@@ -1,5 +1,5 @@
 import {Context, Server} from '@loopback/core';
-import {connect, Connection} from 'amqplib';
+import {Channel, connect, Connection} from 'amqplib';
 
 
 export class RabbitmqServer extends Context implements Server {
@@ -17,7 +17,16 @@ export class RabbitmqServer extends Context implements Server {
       password: 'admin'
     });
     this.listening = true;
-    return undefined;
+    this.boot();
+  }
+
+  async boot(): Promise<void> {
+    // Criação do canal para comunicação com o Rabbitmq que usaremos para enviar e consumir informações
+    const channel: Channel = await this.conn.createChannel();
+    // Criando 'exchange' e 'queue' e fazendo um bind através de uma routing key
+    const exchangeAmq = await channel.assertExchange('amq.direct', 'direct');
+    const queue1 = await channel.assertQueue('queue-1');
+    channel.bindQueue(queue1.queue, exchangeAmq.exchange, 'first-key');
   }
 
   async stop(): Promise<void> {
