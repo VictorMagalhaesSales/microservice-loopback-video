@@ -14,6 +14,12 @@ services:
     networks:
       - app-network
       ##- rabbitmq_micro-video COMPOSE DO RABBITMQ MOVIDO PARA ESTE ARQUIVO
+    depends_on:
+      - kibana
+    deploy:
+      resources:
+        limits:
+          memory: 500m
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.5.1
@@ -26,14 +32,28 @@ services:
       - 9200:9200
     networks:
       - app-network
+    depends_on:
+      - rabbitmq
+    deploy:
+      resources:
+        limits:
+          memory: 800m
 
   kibana:
     image: docker.elastic.co/kibana/kibana:7.5.1
     container_name: micro-kibana-video
+    environment:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
     ports:
       - 5601:5601
     networks:
       - app-network
+    depends_on:
+      - elasticsearch
+    deploy:
+      resources:
+        limits:
+          memory: 500m
 
   rabbitmq:
     image: rabbitmq:3.8-management-alpine
@@ -49,6 +69,10 @@ services:
       - RABBITMQ_DEFAULT_PASS=admin
     networks:
       - app-network
+    deploy:
+      resources:
+        limits:
+          memory: 500m
 
 networks:
   app-network:
