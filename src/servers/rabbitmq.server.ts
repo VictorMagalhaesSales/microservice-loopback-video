@@ -1,16 +1,19 @@
 import {Context, inject, Server} from '@loopback/core';
 import {repository} from '@loopback/repository';
-import {Channel, connect, Connection} from 'amqplib';
+import {AmqpConnectionManager, AmqpConnectionManagerOptions, ChannelWrapper, connect} from 'amqp-connection-manager';
+import {Channel} from 'amqplib';
 import {RabbitmqBindings} from '../keys';
 import {CategoryRepository} from '../repositories';
 
 export interface RabbitMQConfig {
-  uri: string
+  uri: string,
+  configOptions?: AmqpConnectionManagerOptions
 }
 
 export class RabbitmqServer extends Context implements Server {
   listening: boolean;
-  conn: Connection;
+  conn: AmqpConnectionManager;
+  channelManager: ChannelWrapper;
   channel: Channel;
 
   constructor(
@@ -22,17 +25,29 @@ export class RabbitmqServer extends Context implements Server {
 
   async start(): Promise<void> {
     /*
-    * Lib AMQP instalada para se trabalhar com protocolo AMPQ com Node.
-    * Rabbitmq utiliza esse protocolo.
+    * ANTIGO: Lib AMQP instalada para se trabalhar com protocolo AMPQ(utilizada pelo RabbitMQ) com Node
+    * NOVO: => Estamos utilizando o amqp-connection-manager para conectar e não mais o amqplib
     */
-    this.conn = await connect(this.config.uri);
+    this.conn = await connect([this.config.uri], this.config.configOptions);
     this.listening = true;
-    this.boot();
+    await this.boot();
   }
 
-  async boot(): Promise<void> {
+  private async boot(): Promise<void> {
     // Criação do canal para comunicação com o Rabbitmq que usaremos para enviar e consumir informações
-    this.channel = await this.conn.createChannel();
+    this.channelManager = await this.conn.createChannel();
+    this.channelManager.on('connect', () => {
+      console.log("Sucessfully connected a RabbitMQ channel!");
+      this.listening = true;
+      this.configRabbit();
+    });
+    this.channelManager.on('error', (err: Error, info: {name: string;}) => {
+      console.log(`Failed to setup a RabbitMQ channel - name: ${info.name} / error: ${err.message}!`);
+      this.listening = false;
+    });
+  }
+
+  private async configRabbit() {
     // Criando 'exchange' e 'queue' e fazendo um bind através de uma routing key
     const exchangeTopic = await this.channel.assertExchange('amq.topic', 'topic');
     const syncVideosQueue = await this.channel.assertQueue('micro-catalog/sync-videos');
@@ -40,13 +55,14 @@ export class RabbitmqServer extends Context implements Server {
     this.channel.bindQueue(syncVideosQueue.queue, exchangeTopic.exchange, 'micro.*.*');
 
     this.channel.consume(syncVideosQueue.queue, msg => {
-      if (!msg) return;
+      if (!msg)
+        return;
       const data = JSON.parse(msg.content.toString());
       const [category, operation] = msg.fields.routingKey.split('.').slice(1);
       this.operacao(category, operation, data)
         .then(() => this.channel.ack(msg))
         .catch(() => this.channel.reject(msg));
-    })
+    });
   }
 
   async operacao(category: string, operation: string, data: any) {
