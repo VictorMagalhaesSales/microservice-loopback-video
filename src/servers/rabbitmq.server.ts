@@ -1,8 +1,12 @@
-import {Context, Server} from '@loopback/core';
+import {Context, inject, Server} from '@loopback/core';
 import {repository} from '@loopback/repository';
 import {Channel, connect, Connection} from 'amqplib';
+import {RabbitmqBindings} from '../keys';
 import {CategoryRepository} from '../repositories';
 
+export interface RabbitMQConfig {
+  uri: string
+}
 
 export class RabbitmqServer extends Context implements Server {
   listening: boolean;
@@ -10,7 +14,8 @@ export class RabbitmqServer extends Context implements Server {
   channel: Channel;
 
   constructor(
-    @repository(CategoryRepository) private categoryRepo: CategoryRepository
+    @repository(CategoryRepository) private categoryRepo: CategoryRepository,
+    @inject(RabbitmqBindings.CONFIG) private config: RabbitMQConfig
   ) {
     super();
   }
@@ -20,11 +25,7 @@ export class RabbitmqServer extends Context implements Server {
     * Lib AMQP instalada para se trabalhar com protocolo AMPQ com Node.
     * Rabbitmq utiliza esse protocolo.
     */
-    this.conn = await connect({
-      hostname: 'rabbitmq',
-      username: 'admin',
-      password: 'admin'
-    });
+    this.conn = await connect(this.config.uri);
     this.listening = true;
     this.boot();
   }
