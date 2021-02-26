@@ -1,6 +1,6 @@
 import {Application, Context, CoreBindings, inject, MetadataInspector, Server} from '@loopback/core';
 import {AmqpConnectionManager, ChannelWrapper, connect} from 'amqp-connection-manager';
-import {Channel, ConfirmChannel} from 'amqplib';
+import {Channel, ConfirmChannel, Replies} from 'amqplib';
 import {RABBITMQ_SUBSCRIBE_DECORATOR} from './rabbitmq-subscribe.decorator';
 import {RabbitmqBindings, RabbitMQConfig, RabbitmqSubscriberMetadata, SubscriberRabbitMQ} from './utils.rabbitmq';
 
@@ -27,10 +27,10 @@ export class RabbitmqServer extends Context implements Server {
     await this.boot();
 
     const subscribers = this.searchMethodsWithDecorators();
-    this.bindSubscribers(subscribers);
+    this.bindSubscribersAndConsume(subscribers);
   }
 
-  private async bindSubscribers(subscribers: SubscriberRabbitMQ[]) {
+  private async bindSubscribersAndConsume(subscribers: SubscriberRabbitMQ[]) {
     subscribers.map(sub => {
       return this.channelManager.addSetup(async (channel: ConfirmChannel) => {
         const {queue, exchange, routingKey, queueOptions} = sub.decorator;
@@ -41,8 +41,31 @@ export class RabbitmqServer extends Context implements Server {
         const keys = Array.isArray(routingKey) ? routingKey : [routingKey];
         keys.map(key => {
           channel.bindQueue(assertQueue.queue, exchange, key);
-        })
+        });
+        /* Ligando o consumidor da queue ao método decorado  */
+        this.consume(channel, assertQueue, sub.method);
       });
+    });
+  }
+
+  private consume(channel: ConfirmChannel, assertQueue: Replies.AssertQueue, method: Function) {
+    channel.consume(assertQueue.queue, msg => {
+      if (!msg) return;
+      try {
+        if (msg.content) {
+          let data;
+          try {
+            data = JSON.parse(msg.content.toString());
+            console.log(data);
+          } catch (error) {
+            data = null;
+          }
+          method(data);
+          channel.ack(msg);
+        }
+      } catch (error) {
+        channel.nack(msg);
+      }
     });
   }
 
@@ -94,26 +117,7 @@ export class RabbitmqServer extends Context implements Server {
       }));
     });
 
-    // this.channel.consume(syncVideosQueue.queue, msg => {
-    //   if (!msg)
-    //     return;
-    //   const data = JSON.parse(msg.content.toString());
-    //   const [category, operation] = msg.fields.routingKey.split('.').slice(1);
-    //   this.operacao(category, operation, data)
-    //     .then(() => this.channel.ack(msg))
-    //     .catch(() => this.channel.reject(msg));
-    // });
   }
-
-  // async operacao(category: string, operation: string, data: any) {
-  //   if (category == 'video' && data) {
-  //     switch (operation) {
-  //       case 'create': await this.categoryRepo.create(data);
-  //       case 'update': await this.categoryRepo.updateById(data.id, data);
-  //       case 'delete': await this.categoryRepo.deleteById(data.id);
-  //     }
-  //   }
-  // }
 
   async stop(): Promise<void> {
     this.listening = false;

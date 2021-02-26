@@ -11,6 +11,7 @@ export class CategorySyncService {
     routingKey: 'micro.*.*',
     queue: 'queue1'
   })
-  handler() {
+  handler(data: any) {
+    console.log(data);
   }
 }
