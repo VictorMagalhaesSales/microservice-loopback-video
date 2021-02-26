@@ -1,9 +1,11 @@
-import {Context, inject, Server} from '@loopback/core';
+import {Application, Context, CoreBindings, inject, MetadataInspector, Server} from '@loopback/core';
 import {repository} from '@loopback/repository';
 import {AmqpConnectionManager, AmqpConnectionManagerOptions, ChannelWrapper, connect} from 'amqp-connection-manager';
 import {Channel, ConfirmChannel, Options} from 'amqplib';
+import {RabbitmqSubscriberMetadata, RABBITMQ_SUBSCRIBE_DECORATOR} from '../decorators/rabbitmq-subscribe.decorator';
 import {RabbitmqBindings} from '../keys';
-import {CategoryRepository} from '../repositories';
+import {CategoryRepository} from '../repositories/category.repository';
+import {CategorySyncService} from '../services/category-sync-service.service';
 
 export interface RabbitMQConfig {
   uri: string,
@@ -25,9 +27,10 @@ export class RabbitmqServer extends Context implements Server {
 
   constructor(
     @repository(CategoryRepository) private categoryRepo: CategoryRepository,
+    @inject(CoreBindings.APPLICATION_INSTANCE) public app: Application,
     @inject(RabbitmqBindings.CONFIG) private config: RabbitMQConfig
   ) {
-    super();
+    super(app);
   }
 
   async start(): Promise<void> {
@@ -38,6 +41,9 @@ export class RabbitmqServer extends Context implements Server {
     this.conn = await connect([this.config.uri], this.config.configOptions);
     this.listening = true;
     await this.boot();
+
+    const service = this.getSync<CategorySyncService>(`services.CategorySyncService`);
+    const metadata = MetadataInspector.getAllMethodMetadata<RabbitmqSubscriberMetadata>(RABBITMQ_SUBSCRIBE_DECORATOR, service);
   }
 
   private async boot(): Promise<void> {
