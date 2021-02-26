@@ -36,8 +36,11 @@ if (require.main === module) {
     rabbitmq: {
       uri: process.env.RABBITMQ_URI,
       exchanges: [
-        {name: 'teste1', type: 'direct'},
-        {name: 'teste2', type: 'direct'}
+        {name: 'teste.topic', type: 'topic'}
+      ],
+      queues: ['micro-catalog/sync-video'],
+      binds: [
+        {queue: 'micro-catalog/sync-video', exchange: 'teste.topic', key: 'micro.*.*'}
       ]
     }
   };

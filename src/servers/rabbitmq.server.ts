@@ -12,7 +12,9 @@ export interface RabbitMQConfig {
     name: string,
     type: 'direct' | 'topic' | 'headers' | 'fanout' | 'match' | string,
     options: Options.AssertExchange
-  }>
+  }>,
+  queues?: Array<string>,
+  binds: Array<{queue: string, exchange: string, key: string}>
 }
 
 export class RabbitmqServer extends Context implements Server {
@@ -52,18 +54,25 @@ export class RabbitmqServer extends Context implements Server {
     await this.configRabbit();
   }
 
-  private async configRabbit() {
-    // Criando 'exchange' e 'queue' e fazendo um bind através de uma routing key
-    this.channelManager.addSetup(async (channel: ConfirmChannel) => {
-      if (!this.config.exchanges) return;
+  private async configRabbit(): Promise<void> {
+    return this.channelManager.addSetup(async (channel: ConfirmChannel) => {
 
+      if (!this.config.exchanges) return;
       await Promise.all(this.config.exchanges.map(ex => {
         channel.assertExchange(ex.name, ex.type, ex.options);
       }));
+
+      if (!this.config.queues) return;
+      await Promise.all(this.config.queues.map(queue => {
+        channel.assertQueue(queue);
+      }));
+
+      // CRIANDO O BINDO DAS QUEUES E EXCHANGES CRIADAS ANTERIORMENTE ATRAVÉS DE UMA KEY
+      if (!this.config.queues) return;
+      await Promise.all(this.config.binds.map(bind => {
+        channel.bindQueue(bind.queue, bind.exchange, bind.key);
+      }));
     });
-    // const syncVideosQueue = await this.channel.assertQueue('micro-catalog/sync-videos');
-    // // Qualquer publicação na exchange amq.topic com a key seguindo o padrão micro.*.*, cairá na queue de sync videos
-    // this.channel.bindQueue(syncVideosQueue.queue, exchangeTopic.exchange, 'micro.*.*');
 
     // this.channel.consume(syncVideosQueue.queue, msg => {
     //   if (!msg)
