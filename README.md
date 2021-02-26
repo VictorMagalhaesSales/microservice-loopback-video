@@ -1,6 +1,6 @@
 
 ## Organização didática do projeto:
-Para fins de estudos, foi separado uma pasta chamada `modules` contendo os modulos de **RabbitMQ** e **Elasticsearch** a fim de separar os arquivos criados para tais tecnologias e facilitar as futuras revisões de conteúdo.
+Para fins de estudos, foi separado uma pasta chamada [modules](https://github.com/VictorMagalhaesSales/microservice-loopback-video/tree/master/src/modules) contendo os modulos de **RabbitMQ** e **Elasticsearch** a fim de separar os arquivos criados para tais tecnologias e facilitar as futuras revisões de conteúdo.
 # microservice-loopback-video
 Essa aplicação foi feita utilizando [LoopBack 4 CLI](https://loopback.io/doc/en/lb4/Command-line-interface.html) com o
 [initial project layout](https://loopback.io/doc/en/lb4/Loopback-application-layout.html).
