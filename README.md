@@ -3,8 +3,9 @@
 Para fins de estudos, foi separado uma pasta chamada [modules](https://github.com/VictorMagalhaesSales/microservice-loopback-video/tree/master/src/modules) contendo os modulos de **RabbitMQ** e **Elasticsearch** a fim de separar os arquivos criados para tais tecnologias e facilitar as futuras revisões de conteúdo.
 
 ### RabbitMQ
-- Conexão com o Loopback feita através do server [RabbitmqServer](https://github.com/VictorMagalhaesSales/microservice-loopback-video/blob/master/src/modules/rabbitmq/rabbitmq.server.ts); 
-- Foi criado um decorator [rabbitmqSubscribe](https://github.com/VictorMagalhaesSales/microservice-loopback-video/blob/master/src/modules/rabbitmq/rabbitmq-subscribe.decorator.ts) responsável por conectar os métodos dos serviços às exchanges e queues do RabbitMQ; Tais decorators são recuperados em [RabbitmqServer](https://github.com/VictorMagalhaesSales/microservice-loopback-video/blob/master/src/modules/rabbitmq/rabbitmq.server.ts) e ligados aos consumidores do RabbitMQ;
+- Conexão com o Loopback feita através do server [RabbitmqServer](https://github.com/VictorMagalhaesSales/microservice-loopback-video/blob/master/src/modules/rabbitmq/rabbitmq.server.ts).
+- A **criação das exchanges** é feita através do arquivo [index.ts](https://github.com/VictorMagalhaesSales/microservice-loopback-video/blob/master/src/index.ts), na variável *config* que é passada para o método main() que inicia a aplicação.
+- A **criação das queues** é feita através de decorator [rabbitmqSubscribe](https://github.com/VictorMagalhaesSales/microservice-loopback-video/blob/master/src/modules/rabbitmq/rabbitmq-subscribe.decorator.ts) responsável por conectar os métodos dos serviços às exchanges e queues do RabbitMQ. Tais decorators são recuperados em [RabbitmqServer](https://github.com/VictorMagalhaesSales/microservice-loopback-video/blob/master/src/modules/rabbitmq/rabbitmq.server.ts) e ligados aos consumidores do RabbitMQ.
 
 ## Comandos básicos
 Iniciar aplicações com Docker Compose:
