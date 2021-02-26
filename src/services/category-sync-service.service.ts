@@ -1,5 +1,5 @@
 import {BindingScope, injectable} from '@loopback/core';
-import {rabbitmqSubscribe} from '../decorators/rabbitmq-subscribe.decorator';
+import {rabbitmqSubscribe} from '../modules/rabbitmq/rabbitmq-subscribe.decorator';
 
 @injectable({scope: BindingScope.TRANSIENT})
 export class CategorySyncService {

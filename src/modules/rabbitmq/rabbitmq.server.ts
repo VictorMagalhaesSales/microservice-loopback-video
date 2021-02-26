@@ -2,10 +2,10 @@ import {Application, Context, CoreBindings, inject, MetadataInspector, Server} f
 import {repository} from '@loopback/repository';
 import {AmqpConnectionManager, AmqpConnectionManagerOptions, ChannelWrapper, connect} from 'amqp-connection-manager';
 import {Channel, ConfirmChannel, Options} from 'amqplib';
-import {RabbitmqSubscriberMetadata, RABBITMQ_SUBSCRIBE_DECORATOR} from '../decorators/rabbitmq-subscribe.decorator';
-import {RabbitmqBindings} from '../keys';
-import {CategoryRepository} from '../repositories/category.repository';
-import {CategorySyncService} from '../services/category-sync-service.service';
+import {CategoryRepository} from '../../repositories/category.repository';
+import {CategorySyncService} from '../../services/category-sync-service.service';
+import {RabbitmqBindings} from './keys';
+import {RabbitmqSubscriberMetadata, RABBITMQ_SUBSCRIBE_DECORATOR} from './rabbitmq-subscribe.decorator';
 
 export interface RabbitMQConfig {
   uri: string,

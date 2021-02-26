@@ -1,75 +1,38 @@
 # microservice-loopback-video
 
-This application is generated using [LoopBack 4 CLI](https://loopback.io/doc/en/lb4/Command-line-interface.html) with the
+Essa aplicação foi feita utilizando [LoopBack 4 CLI](https://loopback.io/doc/en/lb4/Command-line-interface.html) com o
 [initial project layout](https://loopback.io/doc/en/lb4/Loopback-application-layout.html).
 
-## Install dependencies
+## Comandos básicos
 
-By default, dependencies were installed when this application was generated.
-Whenever dependencies in `package.json` are changed, run the following command:
-
+Iniciar aplicações com Docker Compose:
+```sh
+docker-compose up
+```
+Instalar dependências:
 ```sh
 npm install
 ```
-
-To only install resolved dependencies in `package-lock.json`:
-
-```sh
-npm ci
-```
-
-## Run the application
-
+Rodar aplicação:
 ```sh
 npm start
 ```
-
-You can also run `node .` to skip the build step.
-
-Open http://127.0.0.1:3000 in your browser.
-
-## Rebuild the project
-
-To incrementally build the project:
-
+Buildar aplicação:
 ```sh
 npm run build
 ```
-
-To force a full build by cleaning up cached artifacts:
-
-```sh
-npm run rebuild
-```
-
-## Fix code style and formatting issues
-
+Style code:
 ```sh
 npm run lint
 ```
-
-To automatically fix such issues:
-
+Executar migrations do DB:
 ```sh
-npm run lint:fix
+ npm run migrate
 ```
+Você também pode rodar `node .` para pular o passo de build.
+Abra http://127.0.0.1:3000 no seu navegador.
 
-## Other useful commands
 
-- `npm run migrate`: Migrate database schemas for models
-- `npm run openapi-spec`: Generate OpenAPI spec into a file
-- `npm run docker:build`: Build a Docker image for this application
-- `npm run docker:run`: Run this application inside a Docker container
+## Organização do projeto:
 
-## Tests
-
-```sh
-npm test
-```
-
-## What's next
-
-Please check out [LoopBack 4 documentation](https://loopback.io/doc/en/lb4/) to
-understand how you can continue to add features to this application.
-
-[![LoopBack](https://github.com/strongloop/loopback-next/raw/master/docs/site/imgs/branding/Powered-by-LoopBack-Badge-(blue)-@2x.png)](http://loopback.io/)
+Para fins de estudos, foi separado uma pasta chamada `modules` contendo os modulos de RabbitMQ e Elasticsearch a fim de separar os arquivos criados para tais tecnologias e facilitar as futuras revisões de conteúdo.

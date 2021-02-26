@@ -4,8 +4,8 @@ import {RepositoryMixin} from '@loopback/repository';
 import {RestComponent, RestServer} from '@loopback/rest';
 import {ServiceMixin} from '@loopback/service-proxy';
 import path from 'path';
+import {RabbitmqServer} from './modules/rabbitmq/rabbitmq.server';
 import {MySequence} from './sequence';
-import {RabbitmqServer} from './servers/rabbitmq.server';
 
 export {ApplicationConfig};
 
