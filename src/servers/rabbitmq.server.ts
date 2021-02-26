@@ -1,13 +1,18 @@
 import {Context, inject, Server} from '@loopback/core';
 import {repository} from '@loopback/repository';
 import {AmqpConnectionManager, AmqpConnectionManagerOptions, ChannelWrapper, connect} from 'amqp-connection-manager';
-import {Channel} from 'amqplib';
+import {Channel, ConfirmChannel, Options} from 'amqplib';
 import {RabbitmqBindings} from '../keys';
 import {CategoryRepository} from '../repositories';
 
 export interface RabbitMQConfig {
   uri: string,
-  configOptions?: AmqpConnectionManagerOptions
+  configOptions?: AmqpConnectionManagerOptions,
+  exchanges?: Array<{
+    name: string,
+    type: 'direct' | 'topic' | 'headers' | 'fanout' | 'match' | string,
+    options: Options.AssertExchange
+  }>
 }
 
 export class RabbitmqServer extends Context implements Server {
@@ -39,30 +44,36 @@ export class RabbitmqServer extends Context implements Server {
     this.channelManager.on('connect', () => {
       console.log("Sucessfully connected a RabbitMQ channel!");
       this.listening = true;
-      this.configRabbit();
     });
     this.channelManager.on('error', (err: Error, info: {name: string;}) => {
       console.log(`Failed to setup a RabbitMQ channel - name: ${info.name} / error: ${err.message}!`);
       this.listening = false;
     });
+    await this.configRabbit();
   }
 
   private async configRabbit() {
     // Criando 'exchange' e 'queue' e fazendo um bind através de uma routing key
-    const exchangeTopic = await this.channel.assertExchange('amq.topic', 'topic');
-    const syncVideosQueue = await this.channel.assertQueue('micro-catalog/sync-videos');
-    // Qualquer publicação na exchange amq.topic com a key seguindo o padrão micro.*.*, cairá na queue de sync videos
-    this.channel.bindQueue(syncVideosQueue.queue, exchangeTopic.exchange, 'micro.*.*');
+    this.channelManager.addSetup(async (channel: ConfirmChannel) => {
+      if (!this.config.exchanges) return;
 
-    this.channel.consume(syncVideosQueue.queue, msg => {
-      if (!msg)
-        return;
-      const data = JSON.parse(msg.content.toString());
-      const [category, operation] = msg.fields.routingKey.split('.').slice(1);
-      this.operacao(category, operation, data)
-        .then(() => this.channel.ack(msg))
-        .catch(() => this.channel.reject(msg));
+      await Promise.all(this.config.exchanges.map(ex => {
+        channel.assertExchange(ex.name, ex.type, ex.options);
+      }));
     });
+    // const syncVideosQueue = await this.channel.assertQueue('micro-catalog/sync-videos');
+    // // Qualquer publicação na exchange amq.topic com a key seguindo o padrão micro.*.*, cairá na queue de sync videos
+    // this.channel.bindQueue(syncVideosQueue.queue, exchangeTopic.exchange, 'micro.*.*');
+
+    // this.channel.consume(syncVideosQueue.queue, msg => {
+    //   if (!msg)
+    //     return;
+    //   const data = JSON.parse(msg.content.toString());
+    //   const [category, operation] = msg.fields.routingKey.split('.').slice(1);
+    //   this.operacao(category, operation, data)
+    //     .then(() => this.channel.ack(msg))
+    //     .catch(() => this.channel.reject(msg));
+    // });
   }
 
   async operacao(category: string, operation: string, data: any) {
