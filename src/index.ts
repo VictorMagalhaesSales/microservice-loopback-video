@@ -37,10 +37,6 @@ if (require.main === module) {
       uri: process.env.RABBITMQ_URI,
       exchanges: [
         {name: 'teste.topic', type: 'topic'}
-      ],
-      queues: ['micro-catalog/sync-video'],
-      binds: [
-        {queue: 'micro-catalog/sync-video', exchange: 'teste.topic', key: 'micro.*.*'}
       ]
     }
   };

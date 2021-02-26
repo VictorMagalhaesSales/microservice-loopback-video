@@ -1,12 +1,5 @@
 import {MethodDecoratorFactory} from '@loopback/core';
-import {Options} from 'amqplib';
-
-export interface RabbitmqSubscriberMetadata {
-  exchange: string,
-  rountingKey: string | string[]
-  queue?: string,
-  queueOptions?: Options.AssertQueue
-}
+import {RabbitmqSubscriberMetadata} from './utils.rabbitmq';
 
 export const RABBITMQ_SUBSCRIBE_DECORATOR = 'rabbitmq-subscribe-metadata';
 

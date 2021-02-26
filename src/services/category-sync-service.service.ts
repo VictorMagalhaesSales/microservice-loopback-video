@@ -3,11 +3,13 @@ import {rabbitmqSubscribe} from '../modules/rabbitmq/rabbitmq-subscribe.decorato
 
 @injectable({scope: BindingScope.TRANSIENT})
 export class CategorySyncService {
+
   constructor() { }
 
   @rabbitmqSubscribe({
     exchange: 'teste.topic',
-    rountingKey: 'micro.*.*'
+    routingKey: 'micro.*.*',
+    queue: 'queue1'
   })
   handler() {
   }
