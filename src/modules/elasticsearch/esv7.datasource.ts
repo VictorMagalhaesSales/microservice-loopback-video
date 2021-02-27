@@ -13,21 +13,37 @@ const config = {
       port: 9200
     }
   ],
+  /* Propriedades mapeadas pelo ElasticSearch que já vão ter um type predefinido. Caso contrário, o ES escolheria o type automaticamente */
   mappingProperties: {
     docType: {
-      type: "keyword"
+      type: 'keyword'
     },
     id: {
-      type: "long"
+      type: 'keyword'
     },
     name: {
-      type: "text",
+      type: 'text',
       fields: {
         keyword: {
-          type: "keyword",
+          type: 'keyword',
           ignore_above: 256
         }
       }
+    },
+    description: {
+      type: 'text'
+    },
+    type: {
+      type: 'byte'
+    },
+    is_active: {
+      type: 'boolean'
+    },
+    created_at: {
+      type: 'date'
+    },
+    updated_at: {
+      type: 'date'
     }
   }
 };
