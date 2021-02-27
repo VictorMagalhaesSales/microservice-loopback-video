@@ -2,19 +2,19 @@ import {BindingScope, injectable} from '@loopback/core';
 import {repository} from '@loopback/repository';
 import {ConsumeMessage} from 'amqplib';
 import {rabbitmqSubscribe} from '../modules/rabbitmq/rabbitmq-subscribe.decorator';
-import {CategoryRepository} from '../repositories/category.repository';
+import {GenreRepository} from '../repositories/genre.repository';
 
 @injectable({scope: BindingScope.TRANSIENT})
-export class CategorySyncService {
+export class GenreSyncService {
 
   constructor(
-    @repository(CategoryRepository) private repository: CategoryRepository
+    @repository(GenreRepository) private repository: GenreRepository
   ) { }
 
   @rabbitmqSubscribe({
     exchange: 'amq.topic',
-    routingKey: 'micro.category.*',
-    queue: 'micro-catalog/sync-videos/category'
+    routingKey: 'micro.genre.*',
+    queue: 'micro-catalog/sync-videos/genre'
   })
   async handler(data: any, message: ConsumeMessage) {
     const action = message.fields.routingKey.split('.').slice(2)[0];

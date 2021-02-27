@@ -4,6 +4,7 @@ import {RepositoryMixin} from '@loopback/repository';
 import {RestComponent, RestServer} from '@loopback/rest';
 import {ServiceMixin} from '@loopback/service-proxy';
 import path from 'path';
+import {Esv7DataSource} from './modules/elasticsearch/esv7.datasource';
 import {RabbitmqServer} from './modules/rabbitmq/rabbitmq.server';
 import {MySequence} from './sequence';
 
@@ -15,6 +16,8 @@ export class MicroserviceLoopbackVideoApplication extends BootMixin(ServiceMixin
 
     // Registrando server do Rabbitmq na aplicação
     this.server(RabbitmqServer);
+    // Registrando o datasource do ElasticSearch
+    this.dataSource(Esv7DataSource);
 
     this.options.rest.sequence = MySequence;
     this.component(RestComponent);

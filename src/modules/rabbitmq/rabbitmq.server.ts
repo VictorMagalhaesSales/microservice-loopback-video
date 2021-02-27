@@ -30,43 +30,18 @@ export class RabbitmqServer extends Context implements Server {
     this.bindSubscribersAndConsume(subscribers);
   }
 
-  private async bindSubscribersAndConsume(subscribers: SubscriberRabbitMQ[]) {
-    subscribers.map(sub => {
-      return this.channelManager.addSetup(async (channel: ConfirmChannel) => {
-        const {queue, exchange, routingKey, queueOptions} = sub.decorator;
-        /* Criando as queues */
-        const assertQueue = await channel.assertQueue(queue ?? '', queueOptions ?? undefined);
-
-        /* Fazendo o bind e exchange entre a queue da anotação através da(s) routingKey(s) */
-        const keys = Array.isArray(routingKey) ? routingKey : [routingKey];
-        keys.map(key => {
-          channel.bindQueue(assertQueue.queue, exchange, key);
-        });
-        /* Ligando o consumidor da queue ao método decorado  */
-        this.consume(channel, assertQueue, sub.method);
-      });
+  async boot(): Promise<void> {
+    // Criação do canal para comunicação com o Rabbitmq que usaremos para enviar e consumir informações
+    this.channelManager = await this.conn.createChannel();
+    this.channelManager.on('connect', () => {
+      console.log("Sucessfully connected a RabbitMQ channel!");
+      this.listening = true;
     });
-  }
-
-  private consume(channel: ConfirmChannel, assertQueue: Replies.AssertQueue, method: Function) {
-    channel.consume(assertQueue.queue, msg => {
-      if (!msg) return;
-      try {
-        if (msg.content) {
-          let data;
-          try {
-            data = JSON.parse(msg.content.toString());
-            console.log(data);
-          } catch (error) {
-            data = null;
-          }
-          method(data);
-          channel.ack(msg);
-        }
-      } catch (error) {
-        channel.nack(msg);
-      }
+    this.channelManager.on('error', (err: Error, info: {name: string;}) => {
+      console.log(`Failed to setup a RabbitMQ channel - name: ${info.name} / error: ${err.message}!`);
+      this.listening = false;
     });
+    await this.createExchanges();
   }
 
   private searchMethodsWithDecorators(): Array<SubscriberRabbitMQ> {
@@ -94,18 +69,45 @@ export class RabbitmqServer extends Context implements Server {
     return subscribers;
   }
 
-  async boot(): Promise<void> {
-    // Criação do canal para comunicação com o Rabbitmq que usaremos para enviar e consumir informações
-    this.channelManager = await this.conn.createChannel();
-    this.channelManager.on('connect', () => {
-      console.log("Sucessfully connected a RabbitMQ channel!");
-      this.listening = true;
+  private async bindSubscribersAndConsume(subscribers: SubscriberRabbitMQ[]) {
+    subscribers.map(sub => {
+      return this.channelManager.addSetup(async (channel: ConfirmChannel) => {
+        const {queue, exchange, routingKey, queueOptions} = sub.decorator;
+        /* Criando as queues */
+        const assertQueue = await channel.assertQueue(queue ?? '', queueOptions ?? undefined);
+
+        /* Fazendo o bind e exchange entre a queue da anotação através da(s) routingKey(s) */
+        const keys = Array.isArray(routingKey) ? routingKey : [routingKey];
+        keys.map(key => {
+          channel.bindQueue(assertQueue.queue, exchange, key);
+        });
+        /* Ligando o consumidor da queue ao método decorado  */
+        this.consume(channel, assertQueue, sub.method);
+      });
     });
-    this.channelManager.on('error', (err: Error, info: {name: string;}) => {
-      console.log(`Failed to setup a RabbitMQ channel - name: ${info.name} / error: ${err.message}!`);
-      this.listening = false;
+  }
+
+  /* OBS: Cada fila só pode ter um único consumidor */
+  private consume(channel: ConfirmChannel, assertQueue: Replies.AssertQueue, method: Function) {
+    channel.consume(assertQueue.queue, msg => {
+      if (!msg) return;
+      try {
+        if (msg.content) {
+          let data;
+          try {
+            data = JSON.parse(msg.content.toString());
+          } catch (error) {
+            data = null;
+            console.log("Unable to transform data to JSON");
+          }
+          method(data, msg);
+          channel.ack(msg);
+        }
+      } catch (error) {
+        console.log("Mensagem recusada. Erro: " + error);
+        channel.nack(msg);
+      }
     });
-    await this.createExchanges();
   }
 
   private async createExchanges(): Promise<void> {

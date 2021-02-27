@@ -1,12 +1,12 @@
 import {inject} from '@loopback/core';
 import {DefaultCrudRepository} from '@loopback/repository';
-import {Category, CategoryRelations} from '../models/category.model';
+import {CastMember, CastMemberRelations} from '../models/cast-member.model';
 import {Esv7DataSource} from '../modules/elasticsearch/esv7.datasource';
 
-export class CategoryRepository extends
-  DefaultCrudRepository<Category, typeof Category.prototype.id, CategoryRelations> {
+export class CastMemberRepository extends
+  DefaultCrudRepository<CastMember, typeof CastMember.prototype.id, CastMemberRelations> {
 
   constructor(@inject('datasources.esv7') dataSource: Esv7DataSource) {
-    super(Category, dataSource);
+    super(CastMember, dataSource);
   }
 }
