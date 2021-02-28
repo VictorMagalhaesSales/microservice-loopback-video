@@ -4,7 +4,7 @@ import {ConsumeMessage} from 'amqplib';
 import {rabbitmqSubscribe} from '../modules/rabbitmq/rabbitmq-subscribe.decorator';
 import {CastMemberRepository} from '../repositories/cast-member.repository';
 
-@injectable({scope: BindingScope.TRANSIENT})
+@injectable({scope: BindingScope.SINGLETON})
 export class CastMemberSyncService {
 
   constructor(

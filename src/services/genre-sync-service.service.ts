@@ -4,7 +4,7 @@ import {ConsumeMessage} from 'amqplib';
 import {rabbitmqSubscribe} from '../modules/rabbitmq/rabbitmq-subscribe.decorator';
 import {GenreRepository} from '../repositories/genre.repository';
 
-@injectable({scope: BindingScope.TRANSIENT})
+@injectable({scope: BindingScope.SINGLETON})
 export class GenreSyncService {
 
   constructor(

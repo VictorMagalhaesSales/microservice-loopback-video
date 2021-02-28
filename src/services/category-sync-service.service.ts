@@ -4,7 +4,7 @@ import {ConsumeMessage} from 'amqplib';
 import {rabbitmqSubscribe} from '../modules/rabbitmq/rabbitmq-subscribe.decorator';
 import {CategoryRepository} from '../repositories/category.repository';
 
-@injectable({scope: BindingScope.TRANSIENT})
+@injectable({scope: BindingScope.SINGLETON})
 export class CategorySyncService {
 
   constructor(
