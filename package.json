@@ -69,6 +69,7 @@
     "@loopback/testlab": "^3.2.11",
     "@types/amqp-connection-manager": "^2.0.10",
     "@types/amqplib": "^0.5.17",
+    "@types/lodash": "^4.14.168",
     "@types/node": "^10.17.51",
     "eslint": "^7.18.0",
     "source-map-support": "^0.5.19",
