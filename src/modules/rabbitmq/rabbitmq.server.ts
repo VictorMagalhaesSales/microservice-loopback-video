@@ -105,6 +105,7 @@ export class RabbitmqServer extends Context implements Server {
         }
       } catch (error) {
         console.log("Mensagem recusada. Erro: " + error);
+        if (!msg) return;
         channel.nack(msg);
       }
     });

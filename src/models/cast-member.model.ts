@@ -21,10 +21,10 @@ export class CastMember extends Entity {
   @property({type: 'number', required: true})
   type: number;
 
-  @property({type: 'date', required: true})
+  @property({type: 'date', required: false})
   created_at: string;
 
-  @property({type: 'date', required: true})
+  @property({type: 'date', required: false})
   updated_at: string;
 
   constructor(data?: Partial<CastMember>) {

@@ -12,10 +12,10 @@ export class Genre extends Entity {
   @property({type: 'boolean', required: false, default: true})
   is_active: boolean;
 
-  @property({type: 'date', required: true})
+  @property({type: 'date', required: false})
   created_at: string;
 
-  @property({type: 'date', required: true})
+  @property({type: 'date', required: false})
   updated_at: string;
 
   constructor(data?: Partial<Genre>) {
