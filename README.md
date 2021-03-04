@@ -8,29 +8,24 @@ Para fins de estudos, foi separado uma pasta chamada [modules](https://github.co
 - A **criação das queues** é feita através de decorator [rabbitmqSubscribe](https://github.com/VictorMagalhaesSales/microservice-loopback-video/blob/master/src/modules/rabbitmq/rabbitmq-subscribe.decorator.ts) que são recuperados em *[RabbitmqServer](https://github.com/VictorMagalhaesSales/microservice-loopback-video/blob/master/src/modules/rabbitmq/rabbitmq.server.ts):searchMethodsWithDecorators()*, onde é feita a criação da queue, seu bind e a ligação do consumidor da queue com o método anotado para que este realize a operação requerida.
 
 ## Comandos básicos
-Iniciar aplicações com Docker Compose:
 ```sh
+# Iniciar aplicações com Docker Compose:
 docker-compose up
-```
-Instalar dependências:
-```sh
+
+# Instalar dependências:
 npm install
-```
-Rodar aplicação:
-```sh
+
+# Rodar aplicação:
 npm start
-```
-Buildar aplicação:
-```sh
+
+# Buildar aplicação:
 npm run build
-```
-Style code:
-```sh
+
+# Style code:
 npm run lint
-```
-Executar migrations do DB:
-```sh
- npm run migrate
+
+# Executar migrations do DB:
+npm run migrate
 ```
 Você também pode rodar `node .` para pular o passo de build.
 Abra http://127.0.0.1:3000 no seu navegador.
