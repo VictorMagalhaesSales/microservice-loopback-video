@@ -2,6 +2,7 @@ import {BindingScope, injectable} from '@loopback/core';
 import {repository} from '@loopback/repository';
 import {ConsumeMessage} from 'amqplib';
 import {rabbitmqSubscribe} from '../modules/rabbitmq/rabbitmq-subscribe.decorator';
+import {CategoryRepository} from '../repositories/category.repository';
 import {GenreRepository} from '../repositories/genre.repository';
 import {BaseSyncService} from './base-sync.service';
 
@@ -9,7 +10,8 @@ import {BaseSyncService} from './base-sync.service';
 export class GenreSyncService extends BaseSyncService {
 
   constructor(
-    @repository(GenreRepository) protected repository: GenreRepository
+    @repository(GenreRepository) protected repository: GenreRepository,
+    @repository(CategoryRepository) protected categoryRepository: CategoryRepository
   ) {
     super(repository);
   }
@@ -21,5 +23,14 @@ export class GenreSyncService extends BaseSyncService {
   })
   async handler(data: any, message: ConsumeMessage) {
     this.sync(data, message);
+  }
+
+  @rabbitmqSubscribe({
+    exchange: 'amq.topic',
+    routingKey: 'micro.genre-categories.*',
+    queue: 'micro-catalog/sync-videos/genre-categories'
+  })
+  async handlerCategories(data: any, message: ConsumeMessage) {
+    this.syncRelations(data, data.relation_ids, 'categories', this.categoryRepository, message);
   }
 }
