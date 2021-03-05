@@ -11,6 +11,7 @@ export interface RabbitmqSubscriberMetadata {
 
 export interface RabbitMQConfig {
   uri: string,
+  maxAttemptsDeadQueue: number,
   configOptions?: AmqpConnectionManagerOptions,
   exchanges?: Array<{
     name: string,
@@ -21,8 +22,7 @@ export interface RabbitMQConfig {
     name: string,
     options: Options.AssertQueue,
     exchangeBind: {name: string, routingKey: string}
-  }[],
-  binds: Array<{queue: string, exchange: string, key: string}>
+  }[]
 }
 
 export interface SubscriberRabbitMQ {

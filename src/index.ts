@@ -35,6 +35,7 @@ if (require.main === module) {
     },
     rabbitmq: {
       uri: process.env.RABBITMQ_URI,
+      maxAttemptsDeadQueue: 1,
       exchanges: [
         {name: 'dlx.topic', type: 'topic'}
       ],

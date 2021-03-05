@@ -1,6 +1,6 @@
 import {Application, Context, CoreBindings, inject, MetadataInspector, Server} from '@loopback/core';
 import {AmqpConnectionManager, ChannelWrapper, connect} from 'amqp-connection-manager';
-import {Channel, ConfirmChannel, Replies} from 'amqplib';
+import {Channel, ConfirmChannel, Message, Replies} from 'amqplib';
 import {RABBITMQ_SUBSCRIBE_DECORATOR} from './rabbitmq-subscribe.decorator';
 import {RabbitmqBindings, RabbitMQConfig, RabbitmqSubscriberMetadata, SubscriberRabbitMQ} from './utils.rabbitmq';
 
@@ -101,15 +101,33 @@ export class RabbitmqServer extends Context implements Server {
             data = null;
             console.log("Unable to transform data to JSON");
           }
-          method(data, msg);
-          channel.ack(msg);
+          throw new Error();
+          //method(data, msg);
+          //channel.ack(msg);
         }
       } catch (error) {
         console.log("Mensagem recusada. Erro: " + error);
         if (!msg) return;
-        channel.nack(msg);
+        if (this.canDeadLetter(channel, msg)) {
+          console.log("Reject in message", {content: msg.content.toString()});
+          channel.nack(msg, false, false);
+        }
       }
     });
+  }
+
+  private canDeadLetter(channel: Channel, message: Message): boolean {
+    if (message.properties.headers && 'x-death' in message.properties.headers) {
+      const countDeads = message.properties.headers['x-death']![0].count;
+      console.log(message.properties.headers['x-death']);
+      if (countDeads > this.config.maxAttemptsDeadQueue) {
+        channel.ack(message);
+        const queue = message.properties.headers['x-death']![0].queue;
+        console.error(`Ack in ${queue} with error. Max attempts exceeded: ${this.config.maxAttemptsDeadQueue}`);
+        return false;
+      }
+    }
+    return true;
   }
 
   private async createExchanges(): Promise<void> {
