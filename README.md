@@ -6,9 +6,15 @@ Para fins de estudos, foi separado uma pasta chamada [modules](https://github.co
 - A **criação das exchanges** é feita através do arquivo [index.ts](https://github.com/VictorMagalhaesSales/microservice-loopback-video/blob/master/src/index.ts), na variável *config* que é passada para o método main() e posteriormente recuperadas em *[RabbitmqServer](https://github.com/VictorMagalhaesSales/microservice-loopback-video/blob/master/src/modules/rabbitmq/rabbitmq.server.ts):createExchanges()*.
 - A **criação das queues** é feita através de decorator [@rabbitmqSubscribe](https://github.com/VictorMagalhaesSales/microservice-loopback-video/blob/master/src/modules/rabbitmq/rabbitmq-subscribe.decorator.ts) que são recuperados em *[RabbitmqServer](https://github.com/VictorMagalhaesSales/microservice-loopback-video/blob/master/src/modules/rabbitmq/rabbitmq.server.ts):searchMethodsWithDecorators()*, onde é feita a criação da queue, seu bind e a ligação do consumidor da queue com o método anotado para que este realize a operação requerida.
 - A **Dead Letter Queue** é criada através do [index.ts](https://github.com/VictorMagalhaesSales/microservice-loopback-video/blob/master/src/index.ts) com a exchange **dlx.topic** e a queue **dlx.queue.topic** que receberão todas as rejeições de mensagens das queues ligadas à exchange topic. Essa "camada morta" é recuperada e criada em *[RabbitmqServer](https://github.com/VictorMagalhaesSales/microservice-loopback-video/blob/master/src/modules/rabbitmq/rabbitmq.server.ts):createQueues()*. A ligação das queues com a exchange **dlx.topic** é feita também no decorator [@rabbitmqSubscribe](https://github.com/VictorMagalhaesSales/microservice-loopback-video/blob/master/src/modules/rabbitmq/rabbitmq-subscribe.decorator.ts).
--
+
 ### Elasticsearch
 - A aplicação se conecta com o elastic através do conceito de **conectores** do Loopback. Estamos utilizando um conector de elastic(loopback-connector-es) para criar um **DataSource** na nossa aplicação([Esv7DataSource](https://github.com/VictorMagalhaesSales/microservice-loopback-video/blob/master/src/modules/elasticsearch/esv7.datasource.ts)) que define as configurações de conexão;
+
+### Docker Compose
+- Aplicação: http://localhost:3001/
+- Elasticsearch: http://localhost:9200/
+- Kibana: http://localhost:5601/
+- RabbitMQ: http://localhost:15672/
 
 ## Comandos básicos
 ```sh
@@ -31,7 +37,6 @@ npm run lint
 npm run migrate
 ```
 Você também pode rodar `node .` para pular o passo de build.
-Abra http://127.0.0.1:3000 no seu navegador.
 
 Essa aplicação foi feita utilizando [LoopBack 4 CLI](https://loopback.io/doc/en/lb4/Command-line-interface.html) com o
 [initial project layout](https://loopback.io/doc/en/lb4/Loopback-application-layout.html).
