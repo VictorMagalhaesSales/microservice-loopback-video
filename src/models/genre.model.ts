@@ -19,8 +19,8 @@ export class Genre extends Entity {
   @property({type: 'date', required: false})
   updated_at: string;
 
-  @property({
-    type: 'object',
+  @property.array(Category, {
+    type: 'array',
     jsonSchema: { /* Lib JSON Schema utilizada pelo loobpack */
       type: 'array' /* Sobrescreve o 'type' passado em property */,
       properties: {
