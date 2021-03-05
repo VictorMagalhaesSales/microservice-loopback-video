@@ -101,9 +101,8 @@ export class RabbitmqServer extends Context implements Server {
             data = null;
             console.log("Unable to transform data to JSON");
           }
-          throw new Error();
-          //method(data, msg);
-          //channel.ack(msg);
+          method(data, msg);
+          channel.ack(msg);
         }
       } catch (error) {
         console.log("Mensagem recusada. Erro: " + error);
