@@ -42,6 +42,7 @@ export class RabbitmqServer extends Context implements Server {
       this.listening = false;
     });
     await this.createExchanges();
+    await this.createQueues();
   }
 
   private searchMethodsWithDecorators(): Array<SubscriberRabbitMQ> {
@@ -117,6 +118,18 @@ export class RabbitmqServer extends Context implements Server {
       if (!this.config.exchanges) return;
       await Promise.all(this.config.exchanges.map(ex => {
         channel.assertExchange(ex.name, ex.type, ex.options);
+      }));
+    });
+
+  }
+
+  private async createQueues(): Promise<void> {
+    return this.channelManager.addSetup(async (channel: ConfirmChannel) => {
+      if (!this.config.queues) return;
+      await Promise.all(this.config.queues.map(async queue => {
+        await channel.assertQueue(queue.name, queue.options);
+        if (!queue.exchangeBind) return;
+        await channel.bindQueue(queue.name, queue.exchangeBind.name, queue.exchangeBind.routingKey);
       }));
     });
 

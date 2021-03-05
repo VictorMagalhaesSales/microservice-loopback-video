@@ -19,7 +19,7 @@ export class CategorySyncService extends BaseSyncService {
     routingKey: 'micro.category.*',
     queue: 'micro-catalog/sync-videos/category',
     queueOptions: {
-      deadLetterExchange: 'dlx.amq.topic'
+      deadLetterExchange: 'dlx.topic'
     }
   })
   async handler(data: any, message: ConsumeMessage) {

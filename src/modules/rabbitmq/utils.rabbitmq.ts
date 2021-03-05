@@ -17,7 +17,11 @@ export interface RabbitMQConfig {
     type: 'direct' | 'topic' | 'headers' | 'fanout' | 'match' | string,
     options: Options.AssertExchange
   }>,
-  queues?: Array<string>,
+  queues?: {
+    name: string,
+    options: Options.AssertQueue,
+    exchangeBind: {name: string, routingKey: string}
+  }[],
   binds: Array<{queue: string, exchange: string, key: string}>
 }
 

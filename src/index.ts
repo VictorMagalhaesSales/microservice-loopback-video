@@ -36,8 +36,19 @@ if (require.main === module) {
     rabbitmq: {
       uri: process.env.RABBITMQ_URI,
       exchanges: [
-        {name: 'teste.topic', type: 'topic'}
-      ]
+        {name: 'dlx.topic', type: 'topic'}
+      ],
+      // Teremos somente uma fila morta no sistema para os tipo 'topic'
+      queues: [{
+        name: 'dlx.queue.topic',
+        options: {
+          deadLetterExchange: 'amq.topic',
+          messageTtl: 5000
+        },
+        exchangeBind: {
+          name: 'dlx.topic', routingKey: 'micro.*.*'
+        }
+      }]
     }
   };
   main(config).catch(err => {
