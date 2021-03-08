@@ -1,4 +1,5 @@
 # Organização didática do projeto:
+![Docker](https://img.shields.io/badge/-Docker-blue?style=flat-square&logo=Docker&logoColor=white)
 ![LoopBack](https://img.shields.io/badge/-LoopBack-blue?style=flat-square)
 ![Elasticsearch](https://img.shields.io/badge/-Elasticsearch-red?style=flat-square&logo=elasticsearch)
 ![Kibana](https://img.shields.io/badge/-Kibana-blue?style=flat-square&logo=kibana&color=005571)
