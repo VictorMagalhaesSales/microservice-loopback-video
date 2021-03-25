@@ -1,11 +1,9 @@
 # Organização didática do projeto:
 ![Docker](https://img.shields.io/badge/-Docker-blue?style=flat-square&logo=Docker&logoColor=white)
-![LoopBack](https://img.shields.io/badge/-LoopBack-blue?style=flat-square)
+![LoopBack(NodeJS)](https://img.shields.io/badge/-LoopBack-blue?style=flat-square)
 ![Elasticsearch](https://img.shields.io/badge/-Elasticsearch-red?style=flat-square&logo=elasticsearch)
 ![Kibana](https://img.shields.io/badge/-Kibana-blue?style=flat-square&logo=kibana&color=005571)
 ![RabbitMQ](https://img.shields.io/badge/-RabbitMQ-white?style=flat-square&logo=RabbitMQ)
-![TypeScript](https://img.shields.io/badge/-TypeScript-blue?style=flat-square&logo=typescript&logoColor=white)
-![NodeJS](https://img.shields.io/badge/-NodeJS-white?style=flat-square&logo=node.js&color=339933&logoColor=white)
 
 Para fins de estudos, foi separado uma pasta chamada [modules](https://github.com/VictorMagalhaesSales/microservice-loopback-video/tree/master/src/modules) contendo os modulos de **RabbitMQ** e **Elasticsearch** a fim de separar os arquivos criados para tais tecnologias e facilitar as futuras revisões de conteúdo.
 
