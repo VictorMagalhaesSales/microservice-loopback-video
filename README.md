@@ -5,7 +5,7 @@
 ![Kibana](https://img.shields.io/badge/-Kibana-blue?style=flat-square&logo=kibana&color=005571)
 ![RabbitMQ](https://img.shields.io/badge/-RabbitMQ-white?style=flat-square&logo=RabbitMQ)
 
-Para fins de estudos, foi separado uma pasta chamada [modules](https://github.com/VictorMagalhaesSales/microservice-loopback-video/tree/master/src/modules) contendo os modulos de **RabbitMQ** e **Elasticsearch** a fim de separar os arquivos criados para tais tecnologias e facilitar as futuras revisões de conteúdo. Projeto feito seguindo a "Imersão Full Stack && Full Cycle" da Code Education.
+Para fins de estudos, foi separado uma pasta chamada [modules](https://github.com/VictorMagalhaesSales/microservice-loopback-video/tree/master/src/modules) contendo os modulos de **RabbitMQ** e **Elasticsearch** a fim de separar os arquivos criados para tais tecnologias e facilitar as futuras revisões de conteúdo. Projeto feito seguindo o curso "Desenvolvimento de Aplicações Modernas e Escaláveis com Microsserviços" da Code Education.
 
 ### RabbitMQ
 - Conexão com o Loopback feita através do **server** [RabbitmqServer](https://github.com/VictorMagalhaesSales/microservice-loopback-video/blob/master/src/modules/rabbitmq/rabbitmq.server.ts).
